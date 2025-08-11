@@ -89,4 +89,44 @@ public_users.get("/async/books", async (req, res) => {
   }
 });
 
+
+public_users.get("/async/books/isbn/:isbn", async (req, res) => {
+  try {
+    const isbn = req.params.isbn;
+    const baseUrl = `${req.protocol}://${req.get("host")}`;
+    const r = await axios.get(`${baseUrl}/isbn/${isbn}`);
+    return res.status(200).send(r.data);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({ message: error.message });
+  }
+});
+
+
+public_users.get("/async/books/author/:author", async (req, res) => {
+    try {
+        const author = req.params.author;
+        const baseUrl = `${req.protocol}://${req.get("host")}`;
+        const r = await axios.get(`${baseUrl}/author/${author}`);
+        return res.status(200).send(r.data);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send({ message: error.message });
+    }
+});
+
+
+public_users.get("/async/books/title/:title", async (req, res) => {
+    try {
+        const title = req.params.title;
+        const baseUrl = `${req.protocol}://${req.get("host")}`;
+        const r = await axios.get(`${baseUrl}/title/${title}`);
+        return res.status(200).send(r.data);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send({ message: error.message });
+    }
+});
+
+
 module.exports.general = public_users;
