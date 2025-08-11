@@ -22,11 +22,6 @@ const verifyUser = (req, res, next) => {
   next();
 };
 
-const isValid = (username) => {
-  //returns boolean
-  //write code to check is the username is valid
-};
-
 const authenticatedUser = (username, password) => {
   //returns boolean
   const matchedUser = users.find(
@@ -36,14 +31,13 @@ const authenticatedUser = (username, password) => {
 };
 
 const generateAccessToken = (user) => {
-  const accessToken = jwt.sign(
+  return jwt.sign(
     {
       sub: user,
     },
     secretKey,
     { expiresIn: "1d" },
   );
-  return accessToken;
 };
 
 //only registered users can login
@@ -56,7 +50,6 @@ regd_users.post("/login", (req, res) => {
     res.status(400).send("Username and password are required");
     return;
   }
-  // const matchedUser = users.find(u => u.username === user.username && u.password === user.password);
   if (authenticatedUser(user.username, user.password)) {
     const accessToken = generateAccessToken(user.username);
     req.session.authorization = {
@@ -90,8 +83,26 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
   }
 });
 
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+  const isbn = req.params.isbn;
+  const user = req.user;
+  const book = books[isbn];
+  if (!book) {
+    res.status(400).send("ISBN not found");
+  } else {
+    book.reviews = book.reviews || {};
+    if (book.reviews[user]) {
+      delete book.reviews[user];
+      res.status(200).json({
+        message: "Review deleted successfully.",
+      });
+    } else {
+      res.status(404).send("Review not found");
+    }
+  }
+});
+
 module.exports.authenticated = regd_users;
-module.exports.isValid = isValid;
 module.exports.users = users;
 module.exports.verifyUser = verifyUser;
 module.exports.secretKey = secretKey;

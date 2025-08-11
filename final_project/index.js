@@ -1,7 +1,6 @@
 const express = require("express");
-const jwt = require("jsonwebtoken");
 const session = require("express-session");
-const { verifyUser, secretKey } = require("./router/auth_users");
+const { verifyUser } = require("./router/auth_users");
 const customer_routes = require("./router/auth_users.js").authenticated;
 const genl_routes = require("./router/general.js").general;
 

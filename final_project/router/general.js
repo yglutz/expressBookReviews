@@ -1,6 +1,6 @@
 const express = require("express");
 let books = require("./booksdb.js");
-let isValid = require("./auth_users.js").isValid;
+const axios = require("axios");
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
@@ -75,6 +75,18 @@ public_users.get("/title/:title", function (req, res) {
 public_users.get("/review/:isbn", function (req, res) {
   const isbn = req.params.isbn;
   res.send(JSON.stringify(books[isbn].reviews, null, 4));
+});
+
+// async (makes no sense to self call)
+public_users.get("/async/books", async (req, res) => {
+  try {
+    const baseUrl = `${req.protocol}://${req.get("host")}`;
+    const r = await axios.get(`${baseUrl}/`);
+    return res.status(200).send(r);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({ message: error.message });
+  }
 });
 
 module.exports.general = public_users;
