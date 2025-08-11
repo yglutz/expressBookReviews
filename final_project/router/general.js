@@ -6,11 +6,18 @@ const public_users = express.Router();
 
 
 public_users.post("/register", (req,res) => {
-  const username = body.username;
-  const password = body.password;
-  if(!username || !password){
+  const newUser = new Object({"username": req.body.username, "password": req.body.password})
+  if(!newUser.username || !newUser.password){
     res.status(400).send("Username and password are required");
+    return;
   }
+  const matchingUser = users.find(user => user.username === newUser.username);
+  if (!matchingUser) {
+    users.push(newUser)
+    res.status(200).send("User created.")
+    return;
+  }
+  res.status(403).send("User already exists.")
 });
 
 // Get the book list available in the shop
